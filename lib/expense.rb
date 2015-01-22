@@ -1,0 +1,43 @@
+class Expense
+  attr_reader(:date, :description, :cost, :id)
+
+  define_method(:initialize) do |attributes|
+    @date = attributes.fetch(:date)
+    @description = attributes.fetch(:description)
+    @cost = attributes.fetch(:cost)
+    @id = attributes.fetch(:id)
+  end
+
+  define_singleton_method(:all) do
+    returned_expenses = DB.exec("SELECT * FROM expenses;")
+    expenses = []
+    returned_expenses.each() do |expense|
+      date = expense.fetch("date")
+      description = expense.fetch("description")
+      cost = expense.fetch("cost")
+      id = expense.fetch("id").to_i()
+      expenses.push(Expense.new({:date => date, :description => description, :cost => cost, :id => id }))
+    end
+    expenses
+  end
+
+  define_method(:save) do
+    result = DB.exec( "INSERT INTO expenses (date, description, cost) VALUES ('#{@date}', '#{@description}', '#{@cost}') RETURNING id;" )
+    @id = result.first().fetch("id").to_i()
+  end
+
+   define_method(:==) do |another_expense|
+     self.description().==(another_expense.description()).&(self.id().==(another_expense.id()))
+  end
+
+  define_singleton_method(:find) do |id|
+    found_expense = nil
+    Expense.all().each() do |expense|
+      if expense.id().==(id)
+        found_expense = expense
+      end
+    end
+    found_expense
+  end
+
+end
