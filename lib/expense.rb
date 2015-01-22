@@ -40,4 +40,12 @@ class Expense
     found_expense
   end
 
+  define_method(:category) do
+    result = DB.exec("SELECT categories.*FROM
+    expenses JOIN expense_categories ON (expenses.id = expense_categories.expense_id)
+             JOIN categories ON (expense_categories.category_id = categories.id)
+
+    WHERE expenses.id = #{@self.id()};")
+    result
+  end
 end

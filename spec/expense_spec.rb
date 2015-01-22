@@ -34,4 +34,14 @@ describe(Expense) do
     end
   end
 
+  describe('#category') do
+    it("joins a category to an expense") do
+      expense1 = Expense.new({:date => "1/22/2015", :description => "Lunch", :cost => 50, :id => nil })
+      expense1.save()
+      test_category1 = Category.new({:expense_type => "Restaurants", :id => nil})
+      test_category1.save()
+      expect(expense1.category()).to(eq("Restaurants"))
+    end
+  end
+
 end
