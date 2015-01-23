@@ -1,5 +1,5 @@
 class Expense
-  attr_reader(:date, :description, :cost, :id)
+  attr_reader(:date, :description, :cost, :category_id, :id)
 
   define_method(:initialize) do |attributes|
     @date = attributes.fetch(:date)
@@ -40,12 +40,22 @@ class Expense
     found_expense
   end
 
-  define_method(:category) do
-    result = DB.exec("SELECT categories.*FROM
+  define_method(:add_category) do |category|
+    DB.exec("INSERT INTO expense_categories (expense_id, category_id) VALUES (#{self.id()}, #{category.id()})")
+  end
+
+  define_method(:find_categories) do
+    result = DB.exec("SELECT categories.* FROM
     expenses JOIN expense_categories ON (expenses.id = expense_categories.expense_id)
              JOIN categories ON (expense_categories.category_id = categories.id)
-
-    WHERE expenses.id = #{@self.id()};")
-    result
+    WHERE expenses.id = #{self.id()};")
+    categories = []
+    result.each() do |category|
+      expense_type = category.fetch("expense_type")
+      id = category.fetch("id").to_i()
+      returned_categories = Category.new({:expense_type => expense_type, :id => id})
+      categories.push(returned_categories)
+    end
+    categories
   end
 end

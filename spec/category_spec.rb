@@ -36,4 +36,12 @@ describe(Category) do
       expect(Category.find(test_category2.id())).to(eq(test_category2))
     end
   end
+
+  # describe("find_table_id") do
+  #   it("returns the id for a partiular table entry") do
+  #    test_category = Category.new({:expense_type => "Restaurants", :id => nil})
+  #    test_category.save()
+  #    test_expense = Expense.new({:})
+  #   end
+  # end
 end
